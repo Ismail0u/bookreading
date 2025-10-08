@@ -1,0 +1,62 @@
+# --------------------------------------------------------
+# Fichier : .github/workflows/deploy.yml
+# --------------------------------------------------------
+
+# Nom du workflow (visible dans l'onglet Actions)
+name: Deploy React App to GitHub Pages
+
+# Le workflow se déclenche quand :
+on:
+  push:
+    branches:
+      - main # Quand on push sur la branche 'main'
+  workflow_dispatch: # Permet de le lancer manuellement
+
+# Concurrence : permet d'annuler une exécution précédente si un nouveau push arrive.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    # Le runner qui exécute les étapes
+    runs-on: ubuntu-latest
+    
+    steps:
+      # Étape 1 : Récupérer le code du dépôt
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        
+      # Étape 2 : Configurer l'environnement Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' 
+          cache: 'npm'
+          # Optimisation du cache pour votre sous-répertoire
+          cache-dependency-path: bookreading/intro_to_react_app/the_app/package-lock.json
+
+      # Étape 3 : Installer, construire et générer le dossier 'dist'
+      - name: Install dependencies and Build project
+        run: |
+          # ❗️ NAVIGATION CRUCIALE VERS LE SOUS-RÉPERTOIRE
+          cd bookreading/intro_to_react_app/the_app 
+          
+          npm ci # Installation propre
+          npm run build # Génération du dossier 'dist'
+          
+      # Étape 4 : Configurer le déploiement sur Pages (Nouveauté GitHub)
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      # Étape 5 : Télécharger l'Artifact de build (le dossier 'dist')
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # Le chemin exact vers le dossier 'dist' généré 
+          path: 'bookreading/intro_to_react_app/the_app/dist'
+
+      # Étape 6 : Déployer l'Artifact sur GitHub Pages
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
