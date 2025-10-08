@@ -17,6 +17,12 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read # Permission pour lire le code (nécessaire pour checkout)
+  pages: write   # Permission pour écrire le résultat sur GitHub Pages
+  id-token: write # Permission pour générer le jeton OIDC (CORRECTION DE L'ERREUR)
+
+
 jobs:
   build-and-deploy:
     # Le runner qui exécute les étapes
