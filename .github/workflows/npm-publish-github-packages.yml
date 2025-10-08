@@ -34,13 +34,13 @@ jobs:
           node-version: '20' 
           cache: 'npm'
           # Optimisation du cache pour votre sous-répertoire
-          cache-dependency-path: bookreading/intro_to_react_app/the_app/package-lock.json
+          cache-dependency-path: intro_to_react_app/the_app/package-lock.json
 
       # Étape 3 : Installer, construire et générer le dossier 'dist'
       - name: Install dependencies and Build project
         run: |
           # ❗️ NAVIGATION CRUCIALE VERS LE SOUS-RÉPERTOIRE
-          cd bookreading/intro_to_react_app/the_app 
+          cd intro_to_react_app/the_app 
           
           npm ci # Installation propre
           npm run build # Génération du dossier 'dist'
@@ -54,7 +54,7 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           # Le chemin exact vers le dossier 'dist' généré 
-          path: 'bookreading/intro_to_react_app/the_app/dist'
+          path: 'intro_to_react_app/the_app/dist'
 
       # Étape 6 : Déployer l'Artifact sur GitHub Pages
       - name: Deploy to GitHub Pages
